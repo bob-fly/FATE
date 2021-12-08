@@ -17,9 +17,9 @@
 from pathlib import Path
 
 from pipeline.backend import get_default_config
-from pipeline.constant import Backend, JobStatus, WorkMode
+from pipeline.constant import JobStatus
 
-__all__ = ["Backend", "WorkMode", "JobStatus", "VERSION", "SERVER_VERSION", "TIME_QUERY_FREQS", "Role", "StatusCode",
+__all__ = ["JobStatus", "VERSION", "SERVER_VERSION", "TIME_QUERY_FREQS", "Role", "StatusCode",
            "LogPath", "LogFormat", "IODataType", "FlowConfig"]
 
 VERSION = 2
@@ -68,11 +68,14 @@ class FlowConfig(object):
     IP = conf.get("ip", None)
     if IP is None:
         raise ValueError(f"IP not configured. "
-                         f"Please use command line tool pipeline config or modify setting file pipeline/config.yaml")
+                         f"Please use command line tool pipeline init to set Flow server IP.")
     PORT = conf.get("port", None)
     if PORT is None:
         raise ValueError(f"PORT not configured. "
-                         f"Please use command line tool pipeline config or modify setting file pipeline/config.yaml")
+                         f"Please use command line tool pipeline init to set Flow server port")
+
+    APP_KEY = conf.get("app_key", None)
+    SECRET_KEY = conf.get("secret_key", None)
 
 
 class LogPath(object):
@@ -102,3 +105,12 @@ class LogFormat(object):
     SIMPLE = '<green>[{time:HH:mm:ss}]</green><level>{message}</level>'
     NORMAL = '<green>{time:YYYY-MM-DD HH:mm:ss}</green> | ' \
              '<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>'
+
+
+class SystemSetting(object):
+    @classmethod
+    def system_setting(cls):
+        conf = get_default_config()
+        system_setting = conf.get("system_setting", {})
+        # system_role = system_setting.get("role", None)
+        return system_setting

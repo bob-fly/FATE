@@ -2,29 +2,50 @@
     "dsl_version": 2,
     "initiator": {
         "role": "guest",
-        "party_id": 10000
+        "party_id": 9999
     },
     "role": {
-        "guest": [
+        "arbiter": [
             10000
         ],
         "host": [
-            9999
+            10000
         ],
-        "arbiter": [
+        "guest": [
             9999
         ]
     },
-    "job_parameters": {
-        "common": {
-            "job_type": "train",
-            "backend": 0,
-            "work_mode": 0
-        }
-    },
     "component_parameters": {
+        "role": {
+            "host": {
+                "0": {
+                    "reader_0": {
+                        "table": {
+                            "name": "vehicle_scale_hetero_host",
+                            "namespace": "experiment"
+                        }
+                    },
+                    "data_transform_0": {
+                        "with_label": false
+                    }
+                }
+            },
+            "guest": {
+                "0": {
+                    "reader_0": {
+                        "table": {
+                            "name": "vehicle_scale_hetero_guest",
+                            "namespace": "experiment"
+                        }
+                    },
+                    "data_transform_0": {
+                        "with_label": true
+                    }
+                }
+            }
+        },
         "common": {
-            "dataio_0": {
+            "data_transform_0": {
                 "output_format": "dense"
             },
             "hetero_lr_0": {
@@ -43,34 +64,6 @@
             },
             "evaluation_0": {
                 "eval_type": "binary"
-            }
-        },
-        "role": {
-            "host": {
-                "0": {
-                    "dataio_0": {
-                        "with_label": false
-                    },
-                    "reader_0": {
-                        "table": {
-                            "name": "vehicle_scale_hetero_host",
-                            "namespace": "experiment"
-                        }
-                    }
-                }
-            },
-            "guest": {
-                "0": {
-                    "dataio_0": {
-                        "with_label": true
-                    },
-                    "reader_0": {
-                        "table": {
-                            "name": "vehicle_scale_hetero_guest",
-                            "namespace": "experiment"
-                        }
-                    }
-                }
             }
         }
     }

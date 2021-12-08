@@ -18,4 +18,6 @@
 class ComputingEngine(object):
     EGGROLL = 'EGGROLL'
     SPARK = 'SPARK'
+    LINKIS_SPARK = 'LINKIS_SPARK'
     STANDALONE = 'STANDALONE'
+

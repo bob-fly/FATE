@@ -17,13 +17,11 @@
 import argparse
 
 from pipeline.backend.pipeline import PipeLine
-from pipeline.component.intersection import Intersection
+from pipeline.component import Intersection
 from pipeline.component import Union
-from pipeline.component.reader import Reader
-from pipeline.interface.data import Data
-
+from pipeline.component import Reader
+from pipeline.interface import Data
 from pipeline.utils.tools import load_job_config
-from pipeline.runtime.entity import JobParameters
 
 
 def main(config="../../config.yaml", namespace=""):
@@ -33,8 +31,6 @@ def main(config="../../config.yaml", namespace=""):
     parties = config.parties
     guest = parties.guest[0]
     host = parties.host[0]
-    backend = config.backend
-    work_mode = config.work_mode
 
     # specify input data name & namespace in database
     guest_train_data = {"name": "breast_hetero_guest", "namespace": f"experiment{namespace}"}
@@ -54,13 +50,22 @@ def main(config="../../config.yaml", namespace=""):
     # configure Reader for host
     reader_0.get_party_instance(role='host', party_id=host).component_param(table=host_train_data)
 
+    param = {
+        "intersect_method": "raw",
+        "sync_intersect_ids": True,
+        "only_output_key": True,
+        "raw_params": {
+            "use_hash": True,
+            "hash_method": "sha256",
+            "salt": "12345",
+            "base64": True,
+            "join_role": "host"
+        }
+    }
     # define Intersection components
     intersections = []
     for i in range(200):
-        intersection_tmp = Intersection(name="intersection_" + str(i))
-        intersection_tmp.get_party_instance(role="guest", party_id=guest).component_param(intersect_method="raw",
-                                                                                          sync_intersect_ids=True,
-                                                                                          only_output_key=True)
+        intersection_tmp = Intersection(name="intersection_" + str(i), **param)
         intersections.append(intersection_tmp)
 
     union_0 = Union(name="union_0")
@@ -78,8 +83,7 @@ def main(config="../../config.yaml", namespace=""):
     pipeline.compile()
 
     # fit model
-    job_parameters = JobParameters(backend=backend, work_mode=work_mode)
-    pipeline.fit(job_parameters)
+    pipeline.fit()
 
 
 if __name__ == "__main__":
